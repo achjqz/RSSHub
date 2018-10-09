@@ -18,14 +18,14 @@ router.get('/', async (ctx) => {
     });
 
     const routes = Object.keys(ctx.debug.routes).sort((a, b) => ctx.debug.routes[b] - ctx.debug.routes[a]);
-    const hotRoutes = routes.slice(0, 10);
+    const hotRoutes = routes.slice(0, 50);
     let hotRoutesValue = '';
     hotRoutes.forEach((item) => {
         hotRoutesValue += `${ctx.debug.routes[item]}&nbsp;&nbsp;${item}<br>`;
     });
 
     const ips = Object.keys(ctx.debug.ips).sort((a, b) => ctx.debug.ips[b] - ctx.debug.ips[a]);
-    const hotIPs = ips.slice(0, 10);
+    const hotIPs = ips.slice(0, 50);
     let hotIPsValue = '';
     hotIPs.forEach((item) => {
         hotIPsValue += `${ctx.debug.ips[item]}&nbsp;&nbsp;${item}<br>`;
@@ -110,7 +110,7 @@ router.get('/bilibili/blackboard', require('./routes/bilibili/blackboard'));
 router.get('/bilibili/mall/new', require('./routes/bilibili/mallNew'));
 router.get('/bilibili/mall/ip/:id', require('./routes/bilibili/mallIP'));
 router.get('/bilibili/ranking/:rid?/:day?', require('./routes/bilibili/ranking'));
-router.get('/bilibili/channel/:uid/:cid', require('./routes/bilibili/userChannel'));
+router.get('/bilibili/user/channel/:uid/:cid', require('./routes/bilibili/userChannel'));
 router.get('/bilibili/topic/:topic', require('./routes/bilibili/topic'));
 
 // bangumi
@@ -400,6 +400,8 @@ router.get('/wikipedia/mainland', require('./routes/wikipedia/mainland'));
 // 雪球
 router.get('/xueqiu/user/:id/:type?', require('./routes/xueqiu/user'));
 router.get('/xueqiu/favorite/:id', require('./routes/xueqiu/favorite'));
+router.get('/xueqiu/user_stock/:id', require('./routes/xueqiu/user_stock'));
+router.get('/xueqiu/fund/:id', require('./routes/xueqiu/fund'));
 
 // Greasy Fork
 router.get('/greasyfork/:language/:domain?', require('./routes/greasyfork/scripts'));
@@ -596,5 +598,14 @@ router.get('/dytt/index', require('./routes/dytt/index'));
 
 // 趣头条
 router.get('/qutoutiao/category/:cid', require('./routes/qutoutiao/category'));
+
+// NHK NEW WEB EASY
+router.get('/nhk/news_web_easy', require('./routes/nhk/news_web_easy'));
+
+// BBC
+router.get('/bbc/:channel?', require('./routes/bbc/index'));
+
+// FT 中文网
+router.get('/ft/chinese/:channel?', require('./routes/ft/chinese'));
 
 module.exports = router;
