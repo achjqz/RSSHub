@@ -1,5 +1,5 @@
-const logger = require('./logger');
 const config = require('../config');
+const puppeteer = require('puppeteer');
 
 const options = {
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-infobars', '--window-position=0,0', '--ignore-certifcate-errors', '--ignore-certifcate-errors-spki-list', `--user-agent=${config.ua}`],
@@ -8,28 +8,15 @@ const options = {
     userDataDir: './tmp',
 };
 
-module.exports = (async () => {
+module.exports = async () => {
     let browser;
     if (config.puppeteerWSEndpoint) {
-        const puppeteer = require('puppeteer-core');
         browser = await puppeteer.connect({
             browserWSEndpoint: config.puppeteerWSEndpoint,
         });
     } else {
-        const puppeteer = require('puppeteer');
         browser = await puppeteer.launch(options);
     }
 
-    logger.info('Puppeteer launched.');
-
-    return async () => {
-        const page = await browser.newPage();
-
-        // 防止 page 未正确关闭，一分钟后自行关闭
-        setTimeout(() => {
-            page.close();
-        }, 60000);
-
-        return page;
-    };
-})();
+    return browser;
+};
