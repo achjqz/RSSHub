@@ -236,6 +236,8 @@ Bot initialization required: Add Telegram Bot [@RSSHub_bot](https://t.me/RSSHub_
 
 </routeEN>
 
+<routeEn name="Sticker Pack" author="DIYgod" example="/telegram/stickerpack/DIYgod" path="/telegram/stickerpack/:name" :paramsDesc="['Sticker Pack name, available in the sharing URL']"/>
+
 ## Travel
 
 ### All the Flight Deals
@@ -312,6 +314,12 @@ GitHub provides some official RSS feeds:
 
 </routeEn>
 
+## Parcel Tracking
+
+### Hermes
+
+<routeEn name="Hermes UK" author="HenryQW" example="/parcel/hermesuk/[tracking number]" path="/parcel/hermesuk/:tracking" :paramsDesc="['Tracking number']"/>
+
 ## Uncategorized
 
 ### EZTV
@@ -366,4 +374,4 @@ Provides a better reading experience (full text articles) over the official one.
 
 ### 99% Invisible
 
-<route name="Transcript" author="Ji4n1ng" example="/99percentinvisible/transcript" path="/99percentinvisible/transcript"/>
+<routeEn name="Transcript" author="Ji4n1ng" example="/99percentinvisible/transcript" path="/99percentinvisible/transcript"/>
