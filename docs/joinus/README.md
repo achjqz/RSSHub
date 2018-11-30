@@ -121,7 +121,29 @@ sidebar: auto
     /jianshu/utils.js 类中的全文获取逻辑：
 
     ```js
-    const requestList = [];
+    // 专门定义一个function用于加载文章内容
+    async function load(link) {
+        // 异步请求文章
+        const response = await axios.get(link);
+        // 加载文章内容
+        const $ = cheerio.load(response.data);
+
+        // 解析日期
+        const date = new Date(
+            $('.publish-time')
+                .text()
+                .match(/\d{4}.\d{2}.\d{2} \d{2}:\d{2}/)
+        );
+        const timeZone = 8;
+        const serverOffset = date.getTimezoneOffset() / 60;
+        const pubDate = new Date(date.getTime() - 60 * 60 * 1000 * (timeZone + serverOffset)).toUTCString();
+
+        // 提取内容
+        const description = $('.show-content-free').html();
+
+        // 返回解析的结果
+        return { description, pubDate };
+    }
 
     // 使用 Promise.all() 进行 async 并发
     const result = await Promise.all(
@@ -129,53 +151,26 @@ sidebar: auto
         list.map(async (item) => {
             const $ = cheerio.load(item);
 
+            const $title = $('.title');
             // 还原相对链接为绝对链接
-            const itemUrl = url.resolve(host, $('.title').attr('href'));
+            const itemUrl = url.resolve(host, $title.attr('href'));
 
-            // 查询缓存
-            const cache = await caches.get(itemUrl);
-            if (cache) {
-                return Promise.resolve(JSON.parse(cache));
-            }
-
-            // 返回新的对象
+            // 列表上提取到的信息
             const single = {
-                title: $('.title').text(),
+                title: $title.text(),
                 link: itemUrl,
                 author: $('.nickname').text(),
                 guid: itemUrl,
             };
 
-            // 创建新的 axios 请求，存入 requestList 备用
-            const es = axios.get(itemUrl);
-            requestList.push(es);
-            return Promise.resolve(single);
+            // 使用tryGet方法从缓存获取内容。
+            // 当缓存中无法获取到链接内容的时候，则使用load方法加载文章内容。
+            const other = await caches.tryGet(itemUrl, async () => await load(itemUrl), 3 * 60 * 60);
+
+            // 合并解析后的结果集作为该篇文章最终的输出结果
+            return Promise.resolve(Object.assign({}, single, other));
         })
     );
-
-    // 并发所有 axios 请求
-    const responses = await axios.all(requestList);
-
-    // 循环 axios 结果
-    for (let i = 0; i < responses.length; i++) {
-        const $ = cheerio.load(responses[i].data);
-
-        // 根据网站 HTML，适配相应 selectors
-        result[i].description = $('.show-content-free').html();
-        const date = new Date(
-            $('.publish-time')
-                .text()
-                .match(/\d{4}.\d{2}.\d{2} \d{2}:\d{2}/)
-        );
-
-        // 处理日期时区，东八区 GMT +8 即为 8
-        const timeZone = 8;
-        const serverOffset = date.getTimezoneOffset() / 60;
-        result[i].pubDate = new Date(date.getTime() - 60 * 60 * 1000 * (timeZone + serverOffset)).toUTCString();
-
-        // 存入缓存，缓存时间（单位：秒）设置为 1（小时） * 60（分钟） * 60（秒）= 3600（秒）
-        caches.set(result[i].link, JSON.stringify(result[i]), 1 * 60 * 60);
-    }
     ```
 
     将结果 `result` 赋值给 `ctx.state.data`
@@ -328,41 +323,37 @@ ctx.state.data = {
 };
 ```
 
-#### 制作播客 Podcast Feed
+##### 播客源
 
-参考文章：
-
--   [Podcasts Connect 帮助 创建播客 - Apple](https://help.apple.com/itc/podcasts_connect/#/itca5b22233a)
--   RSS 格式参考: https://codepen.io/jon-walstedt/pen/jsIup
--   播客验证: https://podba.se/validate/?url=https://rsshub.app/ximalaya/album/299146/
-
-这些字段能使你的 RSS 被泛用型播客软件订阅：
+用于音频类 RSS，**额外**添加这些字段能使你的 RSS 被泛用型播客软件订阅：
 
 ```js
 ctx.state.data = {
-    title: '', // 项目的标题
-    link: '', // 指向项目的链接
     itunes_author: '', // 主播名字, 必须填充本字段才会被视为播客
     itunes_category: '', // 播客分类
     image: '', // 专辑图片, 作为播客源时必填
-    description: '', // 描述项目
-    language: '', // 频道语言
     item: [
-        // 其中一篇文章或一项内容
         {
-            title: '', // 文章标题
-            author: '', // 文章作者
-            category: '', // 文章分类
-            // category: [''], // 多个分类
-            description: '', // 文章摘要或全文
-            pubDate: '', // 文章发布时间
-            guid: '', // 文章唯一标示, 必须唯一, 可选, 默认为文章链接
-            link: '', // 指向文章的链接
             itunes_item_image: '', // 图像
             enclosure_url: '', // 音频链接
-            enclosure_length: '', // 时间戳 (播放长度) , 一般是秒数
+            enclosure_length: '', // 时间戳 (播放长度) , 一般是秒数，可选
             enclosure_type: '', // [.mp3就填'audio/mpeg'] [.m4a就填'audio/x-m4a'] [.mp4就填'video/mp4'], 或其他类型.
-            itunes_duration: '', // 由enclosure_length转换为 时:分:秒
+        },
+    ],
+};
+```
+
+##### BT 源
+
+用于下载类 RSS，**额外**添加这些字段能使你的 RSS 被 BT 客户端识别并自动下载：
+
+```js
+ctx.state.data = {
+    item: [
+        {
+            enclosure_url: '', // 磁力链接
+            enclosure_length: '', // 时间戳 (播放长度) , 一般是秒数，可选
+            enclosure_type: 'application/x-bittorrent', // 固定为 'application/x-bittorrent'
         },
     ],
 };
@@ -432,7 +423,7 @@ ctx.state.data = {
         1. 多参数：
 
         ```vue
-        <route name="仓库 Issue" author="HenryQW" example="/github/issue/DIYgod/RSSHub" path="/github/issue/:user/:repo" :paramsDesc="['用户名', '仓库名']"/>
+        <route name="仓库 Issue" author="HenryQW" example="/github/issue/DIYgod/RSSHub" path="/github/issue/:user/:repo" :paramsDesc="['用户名', '仓库名']" />
         ```
 
         结果预览：

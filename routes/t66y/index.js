@@ -34,9 +34,11 @@ const sourceTimezoneOffset = -8;
 const filterReg = /read\.php/;
 
 module.exports = async (ctx) => {
-    const res = await axios_ins.get(url.resolve(base, `${section}${ctx.params.id}&search=today`));
+    const typefilter = ctx.params.type ? `&type=${ctx.params.type}` : '';
+    const res = await axios_ins.get(url.resolve(base, `${section}${ctx.params.id}${typefilter}&search=today`));
     const data = iconv.decode(res.data, 'gbk');
     const $ = cheerio.load(data);
+    const typeTitle = ctx.params.type ? `[${$('.t .fn b').text()}]` : '';
     let list = $('#ajaxtable > tbody:nth-child(2)');
     list = $('.tr2', list)
         .not('.tr2.tac')
@@ -53,11 +55,12 @@ module.exports = async (ctx) => {
         time = regRes === null ? new Date() : new Date(regRes[0]);
         time.setTime(time.getTime() + (sourceTimezoneOffset - time.getTimezoneOffset() / 60) * 60 * 60 * 1000);
 
+        const author = $('#main > div:nth-child(4) > table > tbody > tr.tr1.do_not_catch > th.r_two > b').text();
         const content = $('#main > div:nth-child(4) > table > tbody > tr.tr1.do_not_catch > th:nth-child(2) > table > tbody > tr > td > div.tpc_content.do_not_catch').html();
 
         // Change the image tag to display image in rss reader
         try {
-            $ = cheerio.load(content);
+            $ = cheerio.load(content, { decodeEntities: false }); // 修复无发进行filter与filterout的问题
         } catch (error) {
             return null;
         }
@@ -92,7 +95,8 @@ module.exports = async (ctx) => {
         }
 
         return {
-            description: $.html(),
+            author: author,
+            description: $('body').html(),
             pubDate: time.toUTCString(),
         };
     };
@@ -115,6 +119,11 @@ module.exports = async (ctx) => {
                 return Promise.resolve(JSON.parse(cache));
             }
 
+            const tnode = $('.tal')
+                .contents()
+                .get(0);
+            const catalog = tnode.type === 'text' ? tnode.data.trim() : '';
+
             if (
                 cheerio
                     .load(title)('font')
@@ -132,7 +141,7 @@ module.exports = async (ctx) => {
             }
 
             const single = {
-                title: title,
+                title: `${catalog} ${title}`,
                 link: link,
                 guid: path,
             };
@@ -145,6 +154,7 @@ module.exports = async (ctx) => {
                     return Promise.resolve('');
                 }
 
+                single.author = result.author;
                 single.description = result.description;
                 single.pubDate = result.pubDate;
             } catch (err) {
@@ -156,8 +166,8 @@ module.exports = async (ctx) => {
     );
 
     ctx.state.data = {
-        title: $('title').text(),
-        link: url.resolve(base, `${section}${ctx.params.id}`),
+        title: typeTitle + $('title').text(),
+        link: url.resolve(base, `${section}${ctx.params.id}${typefilter}`),
         item: out.filter((item) => item !== ''),
     };
 };

@@ -15,8 +15,8 @@ RSSHub is a lightweight and extensible RSS feed aggregator, it's able to generat
 
 ### Special Sponsors
 
-| <a href="https://rixcloud.app/rsshub" target="_blank"><img width="240px" src="https://i.imgur.com/qRP0eMg.png"></a> | <a href="https://werss.app?utm_source=rsshub" target="_blank"><img width="170px" src="https://cdn.weapp.design/werss/werss-logo.png"></a> | <a href="https://j.youzan.com/ccPcrY" target="_blank"><img width="180px" src="https://i.imgur.com/FZtFAGz.png"></a> |
-| :-----------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: |
+| <a href="https://rixcloud.app/rsshub" target="_blank"><img width="240px" src="https://i.imgur.com/qRP0eMg.png"></a> | <a href="https://werss.app?utm_source=rsshub" target="_blank"><img width="170px" src="https://cdn.weapp.design/werss/werss-logo.png"></a> |
+| :-----------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------: |
 
 
 ### Sponsors
@@ -396,5 +396,24 @@ Provides a better reading experience (full text articles) over the official one.
 <routeEn name="Editorial" author="HenryQW" example="/guardian/editorial" path="/guardian/editorial">
 
 Provides a better reading experience (full text articles) over the official one.
+
+</routeEn>
+
+### iDownloadBlog
+
+<routeEn name="iDownloadBlog" author="HenryQW" example="/iDownloadBlog" path="/iDownloadBlog/index">
+
+Provides a better reading experience (full text articles) over the official one.
+
+</routeEn>
+
+### 9To5
+
+<routeEn name="9To5 Sub-site" author="HenryQW" example="/9to5/mac" path="/9to5/:type" :paramsDesc="['The sub-site name']">
+
+Supported sub-sites：
+| Mac | Google | Toys |
+| --- | ------ | ---- |
+| Mac | Google | Toys |
 
 </routeEn>
