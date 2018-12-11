@@ -327,6 +327,7 @@ router.get('/yande.re/post/popular_recent/:period', require('./routes/yande.re/p
 
 // 纽约时报
 router.get('/nytimes', require('./routes/nytimes/index'));
+router.get('/nytimes/morning_post', require('./routes/nytimes/morning_post'));
 
 // 3dm
 router.get('/3dm/:name/:type', require('./routes/3dm/game'));
@@ -525,8 +526,9 @@ router.get('/weatheralarm', require('./routes/weatheralarm'));
 // Gitlab
 router.get('/gitlab/explore/:type', require('./routes/gitlab/explore'));
 
-// 忧郁的弟弟
-router.get('/mygalgame', require('./routes/galgame/mygalgame'));
+// 忧郁的loli 换了域名，向下兼容
+router.get('/mygalgame', require('./routes/galgame/mmgal'));
+router.get('/mmgal', require('./routes/galgame/mmgal'));
 
 // 大连工业大学
 router.get('/dpu/jiaowu/news/:type?', require('./routes/universities/dpu/jiaowu/news'));
@@ -535,6 +537,10 @@ router.get('/dpu/wlfw/news/:type?', require('./routes/universities/dpu/wlfw/news
 // 东南大学
 router.get('/seu/radio/academic', require('./routes/universities/seu/radio/academic'));
 router.get('/seu/yzb/:type', require('./routes/universities/seu/yzb'));
+
+// 南京航空航天大学
+router.get('/nuaa/jwc/:type?', require('./routes/universities/nuaa/jwc/jwc'));
+router.get('/nuaa/cs/:type?', require('./routes/universities/nuaa/cs/index'));
 
 // 哈尔滨工业大学
 router.get('/hit/jwc', require('./routes/universities/hit/jwc'));
@@ -548,6 +554,8 @@ router.get('/sjtu/seiee/bjwb/major_select', require('./routes/universities/sjtu/
 router.get('/sjtu/seiee/bjwb/major_transfer', require('./routes/universities/sjtu/seiee/bjwb/major_transfer'));
 router.get('/sjtu/seiee/bjwb/postgraduate', require('./routes/universities/sjtu/seiee/bjwb/postgraduate'));
 router.get('/sjtu/seiee/bjwb/abroad', require('./routes/universities/sjtu/seiee/bjwb/abroad'));
+router.get('/sjtu/seiee/bjwb/international', require('./routes/universities/sjtu/seiee/bjwb/international'));
+router.get('/sjtu/seiee/xsb/:type?', require('./routes/universities/sjtu/seiee/xsb'));
 
 router.get('/sjtu/gs/tzgg/:type?', require('./routes/universities/sjtu/gs/tzgg'));
 
@@ -723,6 +731,7 @@ router.get('/houxu/:type/:id', require('./routes/houxu/houxu'));
 // 老司机
 router.get('/laosiji/hot', require('./routes/laosiji/hot'));
 router.get('/laosiji/feed', require('./routes/laosiji/feed'));
+router.get('/laosiji/hotshow/:id', require('./routes/laosiji/hotshow'));
 
 // 99% Invisible
 router.get('/99percentinvisible/transcript', require('./routes/99percentinvisible/transcript'));
@@ -772,6 +781,7 @@ router.get('/geekpark/breakingnews', require('./routes/geekpark/breakingnews'));
 
 // 百度
 router.get('/baidu/doodles', require('./routes/baidu/doodles'));
+router.get('/baidu/topwords/:boardId?', require('./routes/baidu/topwords'));
 
 // 搜狗
 router.get('/sogou/doodles', require('./routes/sogou/doodles'));
@@ -886,6 +896,22 @@ router.get('/cpu/jwc', require('./routes/cpu/jwc'));
 router.get('/cpu/yjsy', require('./routes/cpu/yjsy'));
 
 // 字幕组
-router.get('/zimuzu/resource/:id', require('./routes/zimuzu/resource'));
+router.get('/zimuzu/resource/:id?', require('./routes/zimuzu/resource'));
+
+// 虎嗅
+router.get('/huxiu/tag/:id', require('./routes/huxiu/tag'));
+
+// Steam
+router.get('/steam/search/:params', require('./routes/steam/search'));
+router.get('/steam/news/:appids', require('./routes/steam/news'));
+
+// 扇贝
+router.get('/shanbay/checkin/:id', require('./routes/shanbay/checkin'));
+
+// Facebook
+router.get('/facebook/page/:id', require('./routes/facebook/page'));
+
+// 停电通知
+router.get('/tingdiantz/95598/:orgNo/:provinceNo/:outageStartTime/:outageEndTime/:scope?', require('./routes/tingdiantz/95598'));
 
 module.exports = router;
