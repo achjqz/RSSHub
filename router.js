@@ -112,6 +112,7 @@ router.get('/bilibili/mall/ip/:id', require('./routes/bilibili/mallIP'));
 router.get('/bilibili/ranking/:rid?/:day?', require('./routes/bilibili/ranking'));
 router.get('/bilibili/user/channel/:uid/:cid', require('./routes/bilibili/userChannel'));
 router.get('/bilibili/topic/:topic', require('./routes/bilibili/topic'));
+router.get('/bilibili/audio/:id', require('./routes/bilibili/audio'));
 
 // bangumi
 router.get('/bangumi/calendar/today', require('./routes/bangumi/calendar/today'));
@@ -235,6 +236,7 @@ if (config.disqus && config.disqus.api_key) {
 // Twitter
 if (config.twitter && config.twitter.consumer_key && config.twitter.consumer_secret && config.twitter.access_token && config.twitter.access_token_secret) {
     router.get('/twitter/user/:id', require('./routes/twitter/user'));
+    router.get('/twitter/list/:id/:name', require('./routes/twitter/list'));
 } else {
     logger.warn('Twitter RSS is disabled for lacking config.');
 }
@@ -358,7 +360,7 @@ router.get('/tingshuitz/guangzhou', require('./routes/tingshuitz/guangzhou'));
 router.get('/tingshuitz/dongguan', require('./routes/tingshuitz/dongguan'));
 
 // MIUI 更新
-router.get('/miui/:device/:type?', require('./routes/miui/index'));
+router.get('/miui/:device/:type?/:region?', require('./routes/miui/index'));
 
 // 米哈游
 router.get('/mihoyo/bh3/:type', require('./routes/mihoyo/bh3'));
@@ -537,6 +539,7 @@ router.get('/dpu/wlfw/news/:type?', require('./routes/universities/dpu/wlfw/news
 // 东南大学
 router.get('/seu/radio/academic', require('./routes/universities/seu/radio/academic'));
 router.get('/seu/yzb/:type', require('./routes/universities/seu/yzb'));
+router.get('/seu/cse/:type?', require('./routes/universities/seu/cse'));
 
 // 南京航空航天大学
 router.get('/nuaa/jwc/:type?', require('./routes/universities/nuaa/jwc/jwc'));
@@ -595,6 +598,16 @@ router.get('/heu/ugs/news/:author?/:category?', require('./routes/universities/h
 // 重庆大学
 router.get('/cqu/jwc/announcement', require('./routes/universities/cqu/jwc/announcement'));
 
+// 南京信息工程大学
+router.get('/nuist/bulletin/:category?', require('./routes/universities/nuist/bulletin'));
+router.get('/nuist/jwc/:category?', require('./routes/universities/nuist/jwc'));
+router.get('/nuist/yjs/:category?', require('./routes/universities/nuist/yjs'));
+router.get('/nuist/xgc', require('./routes/universities/nuist/xgc'));
+router.get('/nuist/scs/:category?', require('./routes/universities/nuist/scs'));
+router.get('/nuist/lib', require('./routes/universities/nuist/library/lib'));
+router.get('/nuist/sese/:category?', require('./routes/universities/nuist/sese'));
+router.get('/nuist/cas/:category?', require('./routes/universities/nuist/cas'));
+
 // 成都信息工程大学
 router.get('/cuit/cxxww/:type?', require('./routes/universities/cuit/cxxww'));
 
@@ -652,6 +665,12 @@ router.get('/scut/jwc/:category?', require('./routes/universities/scut/jwc'));
 
 // 温州商学院
 router.get('/wzbc/:type?', require('./routes/universities/wzbc/news'));
+
+// 河南大学
+router.get('/henu/:type?', require('./routes/universities/henu/news'));
+
+// 南开大学
+router.get('/nku/jwc/:type?', require('./routes/universities/nku/jwc/index'));
 
 // ifanr
 router.get('/ifanr/:channel?', require('./routes/ifanr/index'));
@@ -913,5 +932,12 @@ router.get('/facebook/page/:id', require('./routes/facebook/page'));
 
 // 停电通知
 router.get('/tingdiantz/95598/:orgNo/:provinceNo/:outageStartTime/:outageEndTime/:scope?', require('./routes/tingdiantz/95598'));
+router.get('/tingdiantz/95598/:orgNo/:provinceNo/:scope?', require('./routes/tingdiantz/95598'));
+
+// 36kr
+router.get('/36kr/search/article/:keyword', require('./routes/36kr/search/article'));
+
+// icourse163
+router.get('/icourse163/newest', require('./routes/icourse163/newest'));
 
 module.exports = router;
